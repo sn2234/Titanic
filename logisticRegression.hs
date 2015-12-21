@@ -32,11 +32,11 @@ mapMat f m =
 	theta :: R[n*1]
 -}
 
-data CostGrad = CostGrad { cost :: Float, grad :: Matrix Float } deriving (Show)
+data CostGrad = CostGrad { cost :: Double, grad :: Matrix Double } deriving (Show)
 
 sigmoid x = 1/(1 + exp(-x))
 
-hypothesis :: Matrix Float -> Matrix Float -> Matrix Float
+hypothesis :: Matrix Double -> Matrix Double -> Matrix Double
 hypothesis theta x =
 	fmap sigmoid $ x * theta
 
@@ -46,7 +46,7 @@ xlog x =
 	else
 		log x
 
-computeCostGrad :: Matrix Float -> Matrix Float -> Matrix Float -> Float -> CostGrad
+computeCostGrad :: Matrix Double -> Matrix Double -> Matrix Double -> Double -> CostGrad
 computeCostGrad theta x y lambda =
 	let
 		m = fromIntegral $ nrows x
@@ -62,7 +62,7 @@ computeCostGrad theta x y lambda =
 	in
 		CostGrad {
 			cost = ((forOnes - forZeroes) ! (1, 1))/m + regVal,
-			grad = (fmap (/ m) $ ((transpose (sig - y)) * x)) + (fmap (\i -> i*(lambda/m)) theta1)
+			grad = transpose (fmap (/ m) $ ((transpose (sig - y)) * x)) + (fmap (\i -> i*(lambda/m)) theta1)
 		}
 
 testCost = do

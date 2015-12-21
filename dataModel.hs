@@ -20,15 +20,15 @@ import Text.CSV
 import Text.Parsec.Error
 
 data DataRec = DataRec {
-				 passengerId :: Float
-				,survived :: Float
-				,pclass :: Float
-				,sex :: Float
-				,age :: Float
-				,sibSp :: Float
-				,parch :: Float
-				,fare :: Float
-				,embarked :: Float
+				 passengerId :: Double
+				,survived :: Double
+				,pclass :: Double
+				,sex :: Double
+				,age :: Double
+				,sibSp :: Double
+				,parch :: Double
+				,fare :: Double
+				,embarked :: Double
 				} deriving(Show)
 
 parseDataFile :: String -> IO (Either String [DataRec])
