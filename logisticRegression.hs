@@ -1,6 +1,7 @@
 
 import Data.Matrix
 import Control.Monad
+import Debug.Trace
 
 import DataModel
 
@@ -65,10 +66,25 @@ computeCostGrad theta x y lambda =
 			grad = transpose (fmap (/ m) $ ((transpose (sig - y)) * x)) + (fmap (\i -> i*(lambda/m)) theta1)
 		}
 
+gradDescentOptimize :: Matrix Double -> Double -> (Matrix Double -> CostGrad) -> Double -> Matrix Double
+gradDescentOptimize theta alpha fx epsilon =
+	let
+		c1 = fx theta
+		newTheta = theta - (fmap (* alpha) $ grad c1)
+		c2 = fx newTheta
+		diff = ((cost c1 - cost c2) ** 2)
+		diff1 = Debug.Trace.trace ("diff: " ++ show diff) $ diff
+	in
+		if diff1 > epsilon then
+			gradDescentOptimize newTheta alpha fx epsilon
+		else
+			newTheta
+
 testCost = do
 	let x = fromLists [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
 	let y = fromLists [[1],[0],[1],[0]]
 	let theta = fmap (+1) $ zero 3 1
+	let lambda = 1.5
 	print "X:"
 	print x
 	print "Y:"
@@ -77,8 +93,14 @@ testCost = do
 	print theta
 	print "Hypothesis"
 	print $ hypothesis theta x
-	let result = computeCostGrad theta x y 0.0
+	let result = computeCostGrad theta x y lambda
 	print "Cost:"
 	print $ cost result
 	print "Gradient:"
 	print $ grad result
+	let opt = gradDescentOptimize theta 0.01 (\z -> computeCostGrad z x y lambda) 0.000001
+	print "Optimized theta:"
+	print opt
+	let newCost = cost $ computeCostGrad opt x y lambda
+	print "New cost:"
+	print newCost
