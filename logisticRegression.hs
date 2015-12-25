@@ -1,23 +1,16 @@
+module LogisticRegression (
+	CostGrad,
+	cost,
+	grad,
+	
+	hypothesis,
+	gradDescentOptimize
+)
+where
 
 import Data.Matrix
 import Control.Monad
 import Debug.Trace
-
-import DataModel
-
-{-
-mapMat :: (a -> a) -> Matrix a -> Matrix a
-mapMat f m =
-	let
-		n = nrows m
-		processRow f n m =
-			if n == 0 then
-				mapRow (\_ x -> f x) n m
-			else
-				mapRow (\_ x -> f x) n (processRow f (n-1) m)
-	in
-		processRow f n m
--}
 
 {-
 	Definitions
@@ -66,17 +59,17 @@ computeCostGrad theta x y lambda =
 			grad = transpose (fmap (/ m) $ ((transpose (sig - y)) * x)) + (fmap (\i -> i*(lambda/m)) theta1)
 		}
 
-gradDescentOptimize :: Matrix Double -> Double -> (Matrix Double -> CostGrad) -> Double -> Matrix Double
-gradDescentOptimize theta alpha fx epsilon =
+gradDescentOptimize :: Matrix Double -> Double -> (Matrix Double -> CostGrad) -> Double -> Integer -> Matrix Double
+gradDescentOptimize theta alpha fx epsilon iterations =
 	let
 		c1 = fx theta
 		newTheta = theta - (fmap (* alpha) $ grad c1)
 		c2 = fx newTheta
 		diff = ((cost c1 - cost c2) ** 2)
-		diff1 = Debug.Trace.trace ("diff: " ++ show diff) $ diff
+		diff1 = {-Debug.Trace.trace ("diff: " ++ show diff ++ " cost: " ++ (show $ cost c2) ++ " newTheta: " ++ show newTheta)$-} diff
 	in
-		if diff1 > epsilon then
-			gradDescentOptimize newTheta alpha fx epsilon
+		if diff1 > epsilon && iterations > 0  then
+			gradDescentOptimize newTheta alpha fx epsilon (iterations - 1)
 		else
 			newTheta
 
@@ -98,7 +91,7 @@ testCost = do
 	print $ cost result
 	print "Gradient:"
 	print $ grad result
-	let opt = gradDescentOptimize theta 0.01 (\z -> computeCostGrad z x y lambda) 0.000001
+	let opt = gradDescentOptimize theta 0.01 (\z -> computeCostGrad z x y lambda) 0 3000
 	print "Optimized theta:"
 	print opt
 	let newCost = cost $ computeCostGrad opt x y lambda
