@@ -18,6 +18,7 @@ where
 
 import Text.CSV
 import Text.Parsec.Error
+--import Control.Monad.Except
 
 data DataRec = DataRec {
 				 passengerId :: Double
@@ -36,11 +37,14 @@ parseDataFile fileName = do
 	content <- readFile fileName
 	return $ parseDataRec fileName content
 
+parseConv :: Either ParseError CSV -> Either String CSV
+parseConv (Left x) = Left $ show x
+parseConv (Right x) = Right x
+
 parseDataRec :: String -> String -> Either String [DataRec]
-parseDataRec fileName dataText =
-	case parseCSV fileName dataText of
-		Left err -> Left (show err)
-		Right csv -> processParsed csv
+parseDataRec fileName dataText = do
+	parseRez <- parseConv $ parseCSV fileName dataText
+	processParsed parseRez
 
 processParsed :: CSV -> Either String [DataRec]
 processParsed [] = Left "Empty file"
@@ -52,10 +56,10 @@ processParsed (headerRecord:dataRecords)
 parseData :: [DataRec] -> [Record] -> Either String [DataRec]
 parseData acc [] = Right acc
 parseData acc [_:[]] = Right acc
-parseData acc (r:rs) =
-	case parseRecord r of
-		Right result -> parseData (acc ++ [result]) rs
-		Left x -> Left x
+parseData acc (r:rs) = do
+	result <- parseRecord r
+	parseData (acc ++ [result]) rs
+
 
 parseRecord :: [Field] -> Either String DataRec
 parseRecord (p1:p2:p3:p4:p5:p6:p7:p8:p9:[]) =
