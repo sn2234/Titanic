@@ -18,7 +18,7 @@ where
 
 import Text.CSV
 import Text.Parsec.Error
---import Control.Monad.Except
+import Control.Monad.Except
 
 data DataRec = DataRec {
 				 passengerId :: Double

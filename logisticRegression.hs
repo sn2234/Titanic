@@ -4,7 +4,8 @@ module LogisticRegression (
 	grad,
 	
 	hypothesis,
-	gradDescentOptimize
+	gradDescentOptimize,
+	runRegression
 )
 where
 
@@ -36,7 +37,7 @@ hypothesis theta x =
 
 xlog x =
 	if x == 0.0 then
-		log 1e-10
+		log 1e-17
 	else
 		log x
 
@@ -73,6 +74,13 @@ gradDescentOptimize theta alpha fx epsilon iterations =
 		else
 			newTheta
 
+runRegression alpha lambda x y iterations=
+	let
+		theta = zero (ncols x) 1
+	in
+		gradDescentOptimize theta alpha (\z -> computeCostGrad z x y lambda) 0 iterations
+
+
 testCost = do
 	let x = fromLists [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
 	let y = fromLists [[1],[0],[1],[0]]
@@ -97,3 +105,6 @@ testCost = do
 	let newCost = cost $ computeCostGrad opt x y lambda
 	print "New cost:"
 	print newCost
+	let rr = runRegression 0.01 lambda x y 1000
+	print "runRegression:"
+	print rr

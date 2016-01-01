@@ -2,6 +2,8 @@
 import Data.Matrix
 import Control.Monad
 import Debug.Trace
+import Control.Monad.Except
+import Control.Applicative
 
 import DataModel
 import LogisticRegression
@@ -11,7 +13,7 @@ processDataModel :: [DataRec] -> (Matrix Double, Matrix Double)
 processDataModel dta =
 	(
 		matrixFromLists $ map dataRecToList dta,
-		transpose $ matrixFromLists $ map (\ x -> [survived x]) dta
+		matrixFromLists $ map (\ x -> [survived x]) dta
 	)
 
 -- X vector only
@@ -25,6 +27,13 @@ matrixFromLists x =
 
 test = do
 	rawData <- parseDataFile "train_pure_cv.csv"
-	case rawData of
-		Right d -> print $ processDataModel d
-		Left err -> print $ "Error: " ++ err
+	let res = processDataModel <$> rawData
+	print res
+
+reg x = runRegression 0.01 0.0 (fst x) (snd x) 10000
+
+testLearn = do
+	rawData <- parseDataFile "train_pure_cv.csv"
+	let processedData = processDataModel <$> rawData
+	let theta = reg <$> processedData
+	print theta
