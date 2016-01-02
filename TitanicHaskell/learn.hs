@@ -32,7 +32,7 @@ test = do
 
 reg x = runRegression 0.01 0.0 (fst x) (snd x) 10000
 
-testLearn = do
+main = do
 	rawData <- parseDataFile "train_pure_cv.csv"
 	let processedData = processDataModel <$> rawData
 	let theta = reg <$> processedData
