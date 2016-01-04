@@ -5,7 +5,8 @@ module LogisticRegression (
 	
 	hypothesis,
 	gradDescentOptimize,
-	runRegression
+	runRegression,
+	predict
 )
 where
 
@@ -74,11 +75,17 @@ gradDescentOptimize theta alpha fx epsilon iterations =
 		else
 			newTheta
 
-runRegression alpha lambda x y iterations=
+runRegression alpha lambda x y iterations =
 	let
 		theta = zero (ncols x) 1
 	in
 		gradDescentOptimize theta alpha (\z -> computeCostGrad z x y lambda) 0 iterations
+
+predict theta x theshold =
+	let
+		estimatedProbabilities = hypothesis theta x
+	in
+		fmap (\x -> if x >= theshold then 1.0 else 0.0) estimatedProbabilities
 
 
 testCost = do

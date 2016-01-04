@@ -25,15 +25,29 @@ matrixFromLists :: [[a]] -> Matrix a
 matrixFromLists x =
 	matrix (length x) (length (x !! 0)) (\(i, j) -> (x !! (i - 1)) !! (j - 1))
 
+squareError :: Matrix Double -> Matrix Double -> Double
+squareError a b =
+	(sum $ elementwise (\x y -> (x - y)^^2) a b)/(fromIntegral $ 2*(ncols a)*(nrows a))
+
 test = do
 	rawData <- parseDataFile "train_pure_cv.csv"
 	let res = processDataModel <$> rawData
 	print res
 
-reg x = runRegression 0.01 0.0 (fst x) (snd x) 10000
+reg x = runRegression 0.01 0.0 (fst x) (snd x) 100
 
 main = do
-	rawData <- parseDataFile "train_pure_cv.csv"
+	print "Training logistic regression using trainig data set"
+	rawData <- parseDataFile "train_pure_train.csv"
 	let processedData = processDataModel <$> rawData
 	let theta = reg <$> processedData
+	print "Theta:"
 	print theta
+	
+	cvRawData <- parseDataFile "train_pure_cv.csv"
+	let cvProcessedData = processDataModel <$> cvRawData
+	let predictionCv = (\t z -> predict t (fst z) 0.5) <$> theta <*> cvProcessedData
+	let errorCv = squareError <$> predictionCv <*> (snd <$> cvProcessedData)
+	print "errorCv"
+	print errorCv
+	
