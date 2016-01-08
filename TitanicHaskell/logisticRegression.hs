@@ -115,3 +115,7 @@ testCost = do
 	let rr = runRegression 0.01 lambda x y 1000
 	print "runRegression:"
 	print rr
+	let pp = predict rr x 0.5
+	print "Prediction:"
+	print pp
+	

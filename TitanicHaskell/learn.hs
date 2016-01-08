@@ -34,8 +34,18 @@ test = do
 	let res = processDataModel <$> rawData
 	print res
 
-reg x = runRegression 0.01 0.0 (fst x) (snd x) 100
+reg x = runRegression 0.01 0.0 (fst x) (snd x) 50
 
+checkHypothesis :: Matrix Double -> Matrix Double -> Matrix Double -> Double -> IO()
+checkHypothesis theta x y threshold = do
+	let prediction = predict theta x threshold
+	let error = squareError prediction y
+	print "Predicted values"
+	print $ submatrix 1 10 1 1 prediction
+	print "errorCv"
+	print error
+
+	
 main = do
 	print "Training logistic regression using trainig data set"
 	rawData <- parseDataFile "train_pure_train.csv"
@@ -44,10 +54,29 @@ main = do
 	print "Theta:"
 	print theta
 	
+	print "Data sum:"
+	print $ sum <$> (fst <$> processedData)
+	print $ sum <$> (snd <$> processedData)
+
+	print "Checking on tain set"
+	let predictionTrain = (\t z -> predict t (fst z) 0.5) <$> theta <*> processedData
+	let errorTrain = squareError <$> predictionTrain <*> (snd <$> processedData)
+	print "Predicted values"
+	print $ submatrix 1 10 1 1 <$> predictionTrain
+	print "error"
+	print errorTrain
+	
+	{-
+	print "Checking on tain set"
+	checkHypothesis <*> theta <*> (fst <$> processedData) <*> (snd <$> processedData) 0.5
+	-}
+
+	print "Checking on CV set"
 	cvRawData <- parseDataFile "train_pure_cv.csv"
 	let cvProcessedData = processDataModel <$> cvRawData
 	let predictionCv = (\t z -> predict t (fst z) 0.5) <$> theta <*> cvProcessedData
 	let errorCv = squareError <$> predictionCv <*> (snd <$> cvProcessedData)
+	print "Predicted values"
+	print $ submatrix 1 10 1 1 <$> predictionCv
 	print "errorCv"
 	print errorCv
-	
