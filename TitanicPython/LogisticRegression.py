@@ -48,6 +48,9 @@ def runRegression(lmb, x, y):
 def squareError(x, y):
     return ((x-y)**2).sum()/(2*x.size)
 
+def predictionError(x, y):
+    return np.mean([1 if i[0] != i[1] else 0 for i in zip(x,y)])
+
 def predict(theta, x, theshold):
     estimatedProbabilities = hypothesis(theta, x)
     return np.array([1.0 if p >= theshold else 0.0 for p in estimatedProbabilities])

@@ -6,8 +6,8 @@ import LogisticRegression
 def checkRegressionHypothesis(theta, x, y, threshold):
     (cost, _) = LogisticRegression.computeCostGrad(theta, x, y, 5)
     prediction = LogisticRegression.predict(theta, x, threshold)
-    predictionError = LogisticRegression.squareError(prediction, y)
-    print("Predicted values: {0}\nSquare error: {1}\nCost: {2}"
+    predictionError = LogisticRegression.predictionError(prediction, y)
+    print("Predicted values: {0}\nPrediction error: {1}\nCost: {2}"
           .format(prediction[:10], predictionError,cost))
 
 def test1():
