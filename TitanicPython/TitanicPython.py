@@ -11,11 +11,12 @@ def checkRegressionHypothesis(theta, x, y, threshold):
           .format(prediction[:10], predictionError,cost))
 
 def test1():
-    trainData = DataModel.loadData("..\\train_pure_train.csv")
-    cvData = DataModel.loadData("..\\train_pure_cv.csv")
-    testData = DataModel.loadData("..\\train_pure_cv.csv")
+    dl = DataModel.DataLoader()
+    trainData = dl.loadTrainingSet("..\\train_pure_train.csv")
+    cvData = dl.loadDataSet("..\\train_pure_cv.csv")
+    testData = dl.loadDataSet("..\\train_pure_cv.csv")
 
-    theta = LogisticRegression.runRegression(5, trainData[0], trainData[1])
+    theta = LogisticRegression.runRegression(0, trainData[0], trainData[1])
 
     print("Theta: {0}".format(theta))
 
