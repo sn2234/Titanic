@@ -2,7 +2,17 @@ import numpy as np
 import math as m
 from scipy.optimize import minimize
 
-vexp = np.vectorize(m.exp, otypes=[float])
+def inv_logit(p):
+    if p > 0:
+        return 1. / (1. + np.exp(-p))
+    elif p <= 0:
+        return np.exp(p) / (1 + np.exp(p))
+    else:
+        raise ValueError
+
+sigmoid_u = np.vectorize(inv_logit, otypes=[float])
+
+vexp = np.vectorize(np.exp, otypes=[float])
 
 def sigmoid(x):
     return 1/(1 + vexp(-x))
@@ -10,7 +20,7 @@ def sigmoid(x):
 xlog = np.vectorize(lambda x: m.log(1e-17) if x == 0 else m.log(x))
 
 def hypothesis(theta, x):
-    return sigmoid(np.dot(x, theta))
+    return sigmoid_u(np.dot(x, theta))
 
 def computeCostGrad(theta, x, y, lmb):
     (m, n) = x.shape

@@ -14,20 +14,40 @@ class DataLoader:
         rawData = readData(fileName)
         validateHeader(rawData)
         (x, y) = populateModel(rawData)
+        x = addPolynomialFeatures(x)
         self.initNormalize(x)
         x = self.normalizeDataSet(x)
         x = np.hstack((np.ones((x.shape[0], 1)), x))
-
         return (x,y)
 
     def loadDataSet(self, fileName):
         rawData = readData(fileName)
         validateHeader(rawData)
         (x, y) = populateModel(rawData)
+        x = addPolynomialFeatures(x)
         x = self.normalizeDataSet(x)
         x = np.hstack((np.ones((x.shape[0], 1)), x))
 
         return (x,y)
+
+def polyMult(c, x):
+    return np.hstack((c, x*c))
+
+def addPolynomialFeatures(data):
+    if data.shape[1] == 0:
+        return np.zeros((data.shape[0], 0))
+    else:
+        return np.hstack((polyMult(data[:,0].reshape((data.shape[0], 1)), data),
+                          addPolynomialFeatures(data[:,1:])))
+
+def polynomialMultiply(c, x):
+    return [c] + [c+i for i in x]
+
+def polySq(x):
+    if len(x) == 0:
+        return []
+    else:
+        return polynomialMultiply(x[0], x) + polySq(x[1:])
 
 def readData(fileName):
     data = []
