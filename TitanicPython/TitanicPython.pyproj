@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5c7ebf3c-8851-460f-b0f1-7623908e8928</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>TitanicPython.py</StartupFile>
+    <StartupFile>PythonSVM.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LogisticRegression.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PythonSVM.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TitanicPython.py" />
