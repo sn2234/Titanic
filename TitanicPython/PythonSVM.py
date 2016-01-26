@@ -48,14 +48,15 @@ def svmRegularization():
     x_cv = std_scale.transform(df_cv[featureColumns])
     y_cv = df_cv['Survived']
 
-    cspace = np.linspace(0.1, 5, num = 10, dtype = float)
+    cspace = np.linspace(0.1, 10, num = 50, dtype = float)
     errList = []
     for c in cspace:
         (errTrain, errCv) = getLearnError((x,y), (x_cv, y_cv), c)
         errList.append((errTrain, errCv))
 
-    plt.plot(cspace, [x for (x,y) in errList], "r")
-    plt.plot(cspace, [y for (x,y) in errList], "g")
+    plt.plot(cspace, [x for (x,y) in errList], "r", label="Train")
+    plt.plot(cspace, [y for (x,y) in errList], "g", label="CV")
+    plt.legend()
     plt.show()
 
 def doTest():
