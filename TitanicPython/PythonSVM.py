@@ -36,7 +36,7 @@ def testSvm():
     print("Err Train: {0}, Err CV: {1}".format(errTrain, errCv))
 
 def svmRegularization():
-    featureColumns = ['PassengerId','Pclass','Sex','Age','SibSp','Parch','Fare','Embarked']
+    featureColumns = ['Pclass','Sex','Age','SibSp','Parch','Fare','Embarked']
 
     df = pd.io.parsers.read_csv("..\\train_pure_train.csv")
     std_scale = preprocessing.StandardScaler().fit(df[featureColumns])
@@ -61,12 +61,12 @@ def svmRegularization():
 
 def doTest():
     df = pd.io.parsers.read_csv("..\\train_full.csv")
-    featureColumns = ['PassengerId','Pclass','Sex','Age','SibSp','Parch','Fare','Embarked']
+    featureColumns = ['Pclass','Sex','Age','SibSp','Parch','Fare','Embarked']
     std_scale = preprocessing.StandardScaler().fit(df[featureColumns])
     x = std_scale.transform(df[featureColumns])
     y = df['Survived'] #.reshape((df.shape[0], 1))
 
-    svmFit = svm.SVC()
+    svmFit = svm.SVC(C = 1.2)
     svmFit.fit(x, y)
 
     df_test = pd.io.parsers.read_csv("..\\test_full.csv")
@@ -80,4 +80,5 @@ def doTest():
 
         writer.writerows(zip(df_test['PassengerId'], y_pred))
 
-svmRegularization()
+#svmRegularization()
+doTest()
